@@ -31,6 +31,15 @@ uint16_t yellowR;
 uint16_t yellowG;
 uint16_t yellowB;
 
+uint16_t rpm_a;
+uint16_t bat;
+uint16_t afrtgt;
+uint16_t clt;
+uint16_t afr;
+uint16_t gear;
+uint16_t spd;
+uint16_t sync;
+
 bool back = false;
 bool testing = true;
 int printRPM;
@@ -63,6 +72,15 @@ void Initialize_Dash(void)
     yellowR = 248;
     yellowG = 252;
     yellowB = 13;
+
+    rpm_a = 0;
+    bat = 0;
+    afrtgt = 0;
+    clt = 0;
+    afr = 0;
+    gear = 0;
+    spd = 0;
+    sync = 0;
 }
 
 void updateData(void)
@@ -142,35 +160,69 @@ void updateData(void)
     }
 }
 
-uint16_t Add_Dash_To_Display_List(uint16_t FWol)
+uint16_t Add_Dash_To_Display_List(uint16_t FWol, bool dashMode)
 {
-    if (b3x2 > b2Bound)
-    {
-        FWol = EVE_Cmd_Dat_0(FWol, EVE_ENC_COLOR_RGB(redR, redG, redB));
-        FWol = EVE_Filled_Rectangle(FWol, b3x1, dashY1, b3x2, dashY2);
+    if(dashMode){
+        if (b3x2 > b2Bound)
+        {
+            FWol = EVE_Cmd_Dat_0(FWol, EVE_ENC_COLOR_RGB(redR, redG, redB));
+            FWol = EVE_Filled_Rectangle(FWol, b3x1, dashY1, b3x2, dashY2);
+        }
+
+        if (b2x2 > b1Bound)
+        {
+            FWol = EVE_Cmd_Dat_0(FWol, EVE_ENC_COLOR_RGB(yellowR, yellowG, yellowB));
+            FWol = EVE_Filled_Rectangle(FWol, b2x1, dashY1, b2x2, dashY2);
+        }
+
+        FWol = EVE_Cmd_Dat_0(FWol, EVE_ENC_COLOR_RGB(greenR, greenG, greenB));
+        FWol = EVE_Filled_Rectangle(FWol, b1x1, dashY1, b1x2, dashY2);
+
+        FWol = EVE_PrintF(FWol, 200, 200, 25, EVE_OPT_CENTER, "RPM: ");
+
+        FWol = EVE_PrintF(FWol, 300, 200, 25, EVE_OPT_CENTER, "%3d", printRPM);
+
+        // This is where the Gear functions get printed out *****************
+        //FWol = gearN(FWol);
+        //FWol = gear1(FWol);
+        FWol = gear2(FWol);
+        //FWol = gear3(FWol);
+        //FWol = gear4(FWol);
+        //FWol = gear5(FWol);
+
+    }
+    else{
+
+        FWol = EVE_PrintF(FWol, 200, 200, 25, EVE_OPT_CENTER, "TEST: ");
+        
     }
 
-    if (b2x2 > b1Bound)
-    {
-        FWol = EVE_Cmd_Dat_0(FWol, EVE_ENC_COLOR_RGB(yellowR, yellowG, yellowB));
-        FWol = EVE_Filled_Rectangle(FWol, b2x1, dashY1, b2x2, dashY2);
-    }
+    return (FWol);
+}   
 
-    FWol = EVE_Cmd_Dat_0(FWol, EVE_ENC_COLOR_RGB(greenR, greenG, greenB));
-    FWol = EVE_Filled_Rectangle(FWol, b1x1, dashY1, b1x2, dashY2);
+uint16_t Add_Diag_To_Display_List(uint16_t FWol){
+    //FWol = EVE_PrintF(FWol, 200, 200, 25, EVE_OPT_CENTER, "RPM:  ");
 
-    FWol = EVE_PrintF(FWol, 200, 200, 25, EVE_OPT_CENTER, "RPM: ");
+    FWol =EVE_Filled_Rectangle(FWol, 735 ,175 , 760, 450);
+    //FWol = EVE_PrintF(FWol, 300, 200, 25, EVE_OPT_CENTER, "%3d", rpm_a);
 
-    FWol = EVE_PrintF(FWol, 300, 200, 25, EVE_OPT_CENTER, "%3d", printRPM);
 
-    // This is where the Gear functions get printed out *****************
-    //FWol = gearN(FWol);
-    //FWol = gear1(FWol);
-    FWol = gear2(FWol);
-    //FWol = gear3(FWol);
-    //FWol = gear4(FWol);
-    //FWol = gear5(FWol);
-  
+    /*
+    FWol = EVE_PrintF(FWol, 200, 250, 25, EVE_OPT_CENTER, "BATTERY VOLTAGE:  %3d", bat);
+
+    FWol = EVE_PrintF(FWol, 200, 300, 25, EVE_OPT_CENTER, "TARGET AFR:  %3d", afrtgt);
+
+    FWol = EVE_PrintF(FWol, 200, 350, 25, EVE_OPT_CENTER, "COOLANT TEMP:  %3d", clt);
+
+    FWol = EVE_PrintF(FWol, 400, 200, 25, EVE_OPT_CENTER, "AFR:  %3d", afr);
+
+    FWol = EVE_PrintF(FWol, 400, 250, 25, EVE_OPT_CENTER, "GEAR:  %3d", gear);
+
+    FWol = EVE_PrintF(FWol, 400, 300, 25, EVE_OPT_CENTER, "SPEED:  %3d", spd);
+
+    FWol = EVE_PrintF(FWol, 400, 350, 25, EVE_OPT_CENTER, "SYNC:  %3d", sync);
+    */
+
 
     return (FWol);
 }

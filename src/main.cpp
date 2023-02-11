@@ -111,6 +111,7 @@
 #include "demos.h"
 #include "dash.h"
 
+
   
 //===========================================================================
 void setup()
@@ -212,29 +213,13 @@ void loop()
   DBG_GEEK("Not programming flash.\n");
 #endif // (0 != PROGRAM_FLASH_FROM_USD)
 
-/*
-#if (0 != BOUNCE_DEMO)
-  DBG_STAT("Initialize_Bounce_Demo() . . .");
-  Initialize_Bounce_Demo();
-  DBG_STAT(" done.\n");
-#endif // (0 != BOUNCE_DEMO)
-
-#if (0 != LOGO_DEMO)
-  DBG_STAT("Initialize_Logo_Demo() . . .");
-  FWo=Initialize_Logo_Demo(FWo,&RAM_G_Unused_Start,next_bitmap_handle_available);
-  //Keep track that we used a bitmap handle
-  next_bitmap_handle_available--;
-    
-  DBG_STAT("  done.\n");
-  DBG_GEEK("RAM_G after logo: 0x%08lX = %lu\n",RAM_G_Unused_Start,RAM_G_Unused_Start);
-#endif // (0 != LOGO_DEMO)
-*/
 
 #if (0 != FSAE_DASH)
+  bool dashMode = true;
   DBG_STAT("Initialize_Dash() . . .");
   Initialize_Dash();
   DBG_STAT(" done.\n");
-
+  
    //Bitmask of valid points in the array
   uint8_t
     points_touched_mask;
@@ -255,33 +240,6 @@ void loop()
 #endif // (EVE_TOUCH_TYPE == EVE_TOUCH_CAPACITIVE)
 
 #endif
-
-/*
-#if (0 != BMP_DEMO)
-  DBG_STAT("Initialize_Bitmap_Demo() . . .");
-  FWo=Initialize_Bitmap_Demo(FWo,next_bitmap_handle_available);
-  //Keep track that we used a bitmap handle
-  next_bitmap_handle_available--;
-  DBG_STAT("  done.\n");
-  DBG_GEEK("RAM_G after bitmap: 0x%08lX = %lu\n",RAM_G_Unused_Start,RAM_G_Unused_Start);
-#endif //(0 != BMP_DEMO)
-
-#if (0 != SOUND_DEMO)
-  DBG_STAT("Initialize_Sound_Demo() . . .");
-  FWo=Initialize_Sound_Demo(FWo,&RAM_G_Unused_Start);
-  DBG_STAT("  done.\n");
-  DBG_GEEK("RAM_G after sound: 0x%08lX = %lu\n",RAM_G_Unused_Start,RAM_G_Unused_Start);
-#endif // (0 != SOUND_DEMO)
-
-#if (0 != MARBLE_DEMO)
-  DBG_STAT("Initialize_Marble_Demo() . . .");
-  FWo=Initialize_Marble_Demo(FWo,&RAM_G_Unused_Start,next_bitmap_handle_available);
-  //Keep track that we used a bitmap handle
-  next_bitmap_handle_available--;
-  DBG_STAT("  done.\n");
-  DBG_GEEK("RAM_G after marble: 0x%08lX = %lu\n",RAM_G_Unused_Start,RAM_G_Unused_Start);
-#endif //MARBLE_DEMO
-*/
 
 #if (0 != TOUCH_DEMO)
   //Bitmask of valid points in the array
@@ -304,16 +262,6 @@ void loop()
 #endif // (EVE_TOUCH_TYPE == EVE_TOUCH_CAPACITIVE)
 #endif // (0 != TOUCH_DEMO)
 
-#if (0 != VIDEO_DEMO)
-  FWo=Initialize_Video_Demo(FWo,
-                            &RAM_G_Unused_Start,
-                            next_bitmap_handle_available);
-  //Keep track that we used a bitmap handle
-  next_bitmap_handle_available--;
-  DBG_GEEK("RAM_G after video: 0x%08lX = %lu\n",RAM_G_Unused_Start,RAM_G_Unused_Start);
-#endif // (0 != VIDEO_DEMO)
-
-
   DBG_STAT("Initialization complete, entering main loop.\n");
 
   while(1)
@@ -335,14 +283,6 @@ void loop()
     //Read the touch screen.
     points_touched_mask=Read_Touch(x_points,y_points);
 #endif // TOUCH_DEMO
-
-#if SOUND_DEMO
-    //See if we should play a sound. The sound will synchronize
-    //with the the start of the logo rotation.
-    //If the previous sound is still playing it will wait until the
-    //next time we call it.
-    Start_Sound_Demo_Playing();
-#endif //SOUND_DEMO
 
     //========== START THE DISPLAY LIST ==========
     // Start the display list
@@ -475,13 +415,17 @@ void loop()
 #endif //(0 != TOUCH_DEMO)
 #endif //(0 != MARBLE_DEMO)
 
-#if (0 != BOUNCE_DEMO)
-    //========== BOUNCY BALL $ RUBBER BAND ==========
-    FWo=Add_Bounce_To_Display_List( FWo);
-#endif //BOUNCE_DEMO
-
 #if (0 != FSAE_DASH)
-  FWo = Add_Dash_To_Display_List(FWo);
+  FWo = Add_Dash_To_Display_List(FWo, dashMode);
+  
+  points_touched_mask = Read_Touch(x_points,y_points);
+
+  if(0 != points_touched_mask){
+      dashMode = !dashMode;
+      delay(100);
+  }
+
+  
 #endif //DASH_DEMO
 
 
@@ -533,17 +477,7 @@ void loop()
   updateData();
 #endif //DASH_DEMO
 
-/*
-#if (0 != BOUNCE_DEMO)
-    //========== MOVE THE BALL AND CYCLE COLOR AND TRANSPARENCY ==========
-    Bounce_Ball();
-#endif //(0 != BOUNCE_DEMO)
 
-#if (0 != MARBLE_DEMO)
-  //========== BOUNCE THE MARBLE AROUND ==========
-  Move_Marble();
-#endif //(0 != MARBLE_DEMO)
-*/
 
     }  // while(1)
   } // loop()
