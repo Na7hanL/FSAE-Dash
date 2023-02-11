@@ -31,6 +31,8 @@ uint16_t yellowR;
 uint16_t yellowG;
 uint16_t yellowB;
 
+int gear_test_num = 0;
+
 bool back = false;
 bool testing = true;
 int printRPM;
@@ -139,6 +141,17 @@ void updateData(void)
             rpm = 40;
             back = false;
         }
+
+        if(gear_test_num < 5)
+        {
+            gear_test_num += 1;
+            delay(200);
+        }
+        else
+        {
+            gear_test_num = 0;
+            delay(200);
+        }
     }
 }
 
@@ -164,12 +177,31 @@ uint16_t Add_Dash_To_Display_List(uint16_t FWol)
     FWol = EVE_PrintF(FWol, 300, 200, 25, EVE_OPT_CENTER, "%3d", printRPM);
 
     // This is where the Gear functions get printed out *****************
-    //FWol = gearN(FWol);
-    //FWol = gear1(FWol);
-    FWol = gear2(FWol);
-    //FWol = gear3(FWol);
-    //FWol = gear4(FWol);
-    //FWol = gear5(FWol);
+
+    if(gear_test_num == 0)
+    {
+        FWol = gearN(FWol);
+    }
+    else if(gear_test_num == 1)
+    {
+        FWol = gear1(FWol);
+    }
+    else if(gear_test_num == 2)
+    {
+        FWol = gear2(FWol);
+    }
+    else if(gear_test_num == 3)
+    {
+        FWol = gear3(FWol);
+    }
+    else if(gear_test_num == 4)
+    {
+        FWol = gear4(FWol);
+    }
+    else
+    {
+        FWol = gear5(FWol);
+    }
   
 
     return (FWol);
@@ -216,42 +248,20 @@ uint16_t gear1(uint16_t FWolE)
 
 uint16_t gear2(uint16_t FWolE)
 {
-
     FWolE = EVE_Cmd_Dat_0(FWolE, EVE_ENC_COLOR_RGB(255, 255, 255));
     
     // the Base line
-    FWolE = EVE_Filled_Rectangle(FWolE, 635, 425, 760, 450);
+    FWolE = EVE_Filled_Rectangle(FWolE, 657, 395, 760, 420);
 
-    // The connecter
-    //FWolE = EVE_Filled_Rectangle(FWolE, 645, 400, 675, 425);
-    
-    // blah blah git test
-
-    // Circle Stuff
-    //FWolE=EVE_Line(FWolE, 782.5, 432.5, 617.5 ,192.5, 17.5);
-    FWolE=EVE_Line(FWolE, 687.5, 325, 687.5, 325, 60);
-
+    // Upper Loop
+    FWolE = EVE_Line(FWolE, 697.5, 295, 697.5, 295, 60);
     FWolE = EVE_Cmd_Dat_0(FWolE, EVE_ENC_COLOR_RGB(0, 0, 0));
-    FWolE=EVE_Line(FWolE, 657.5, 345, 657.5, 345, 60);
+    FWolE = EVE_Line(FWolE, 697.5, 295, 697.5, 295, 40);
+    FWolE = EVE_Filled_Rectangle(FWolE, 637.5, 295, 720, 355);
 
+    // Middle line
     FWolE = EVE_Cmd_Dat_0(FWolE, EVE_ENC_COLOR_RGB(255, 255, 255));
-    FWolE=EVE_Line(FWolE, 655, 440, 730, 347, 11);
-
-    FWolE=EVE_Filled_Rectangle(FWolE, 627.5, 265, 687.5, 285);
-
-
-    
-
-
-    
-
-    /*
-    // the Circle
-     FWolE = EVE_Cmd_Dat_0(FWolE, EVE_ENC_COLOR_RGB(255, 255, 255));
-    FWolE = EVE_Line(FWolE, 635, 425, 760, 450, 100);
-    */
-
-    //FWolE = EVE_Point(FWolE, 645, 400, 50);
+    FWolE=EVE_Line(FWolE, 655, 410, 730, 333, 10);
 
     return FWolE;
 }
@@ -288,6 +298,28 @@ uint16_t gear4(uint16_t FWolE)
 
     // left line
     FWolE=EVE_Filled_Rectangle(FWolE, 635, 300, 660, 175);
+
+    return FWolE;
+}
+
+uint16_t gear5(uint16_t FWolE)
+{
+    // Bottom Loop
+    FWolE = EVE_Cmd_Dat_0(FWolE, EVE_ENC_COLOR_RGB(255, 255, 255));
+    FWolE = EVE_Line(FWolE, 697.5, 375, 697.5, 375, 60);
+    FWolE = EVE_Cmd_Dat_0(FWolE, EVE_ENC_COLOR_RGB(0, 0, 0));
+    FWolE = EVE_Line(FWolE, 697.5, 375, 697.5, 375, 40);
+    FWolE = EVE_Filled_Rectangle(FWolE, 637.5, 265, 697.5, 380);
+
+    // the Middle line
+    FWolE = EVE_Cmd_Dat_0(FWolE, EVE_ENC_COLOR_RGB(255, 255, 255));
+    FWolE = EVE_Filled_Rectangle(FWolE, 640, 316, 698, 334);
+
+    // Left line
+    FWolE = EVE_Filled_Rectangle(FWolE, 640, 316, 660, 250);
+
+    // Top Line
+    FWolE = EVE_Filled_Rectangle(FWolE, 640, 250, 750, 230);
 
     return FWolE;
 }
