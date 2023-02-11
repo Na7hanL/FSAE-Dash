@@ -6,7 +6,7 @@
 #include "EVE_base.h"
 #include "EVE_draw.h"
 #include <iostream>
-#include <String>
+//#include <String>
 
 // Renamed rpm variable to rpm_a because it was causing issues with an already defined rpm function--- Maddux
 uint16_t rpm_a, bat, afrtgt, clt, afr, gear, spd, sync;

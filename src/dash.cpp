@@ -6,7 +6,7 @@
 #include "EVE_base.h"
 #include "EVE_draw.h"
 #include <iostream>
-#include <String>
+//#include <String>
 
 uint16_t b1x1;
 uint16_t b1x2;

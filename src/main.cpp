@@ -212,6 +212,7 @@ void loop()
   DBG_GEEK("Not programming flash.\n");
 #endif // (0 != PROGRAM_FLASH_FROM_USD)
 
+/*
 #if (0 != BOUNCE_DEMO)
   DBG_STAT("Initialize_Bounce_Demo() . . .");
   Initialize_Bounce_Demo();
@@ -227,14 +228,35 @@ void loop()
   DBG_STAT("  done.\n");
   DBG_GEEK("RAM_G after logo: 0x%08lX = %lu\n",RAM_G_Unused_Start,RAM_G_Unused_Start);
 #endif // (0 != LOGO_DEMO)
+*/
 
 #if (0 != FSAE_DASH)
   DBG_STAT("Initialize_Dash() . . .");
   Initialize_Dash();
   DBG_STAT(" done.\n");
+
+   //Bitmask of valid points in the array
+  uint8_t
+    points_touched_mask;
+#if (EVE_TOUCH_TYPE == EVE_TOUCH_RESISTIVE)
+  DBG_GEEK("Resistive touch, single point.\n");
+  int16_t
+    x_points[1];
+  int16_t
+    y_points[1];
+#endif // (EVE_TOUCH_TYPE == EVE_TOUCH_RESISTIVE)
+
+#if (EVE_TOUCH_TYPE == EVE_TOUCH_CAPACITIVE)
+  DBG_GEEK("Capacitive touch, multiple points.\n");
+  int16_t
+    x_points[5];
+  int16_t
+    y_points[5];
+#endif // (EVE_TOUCH_TYPE == EVE_TOUCH_CAPACITIVE)
+
 #endif
 
-
+/*
 #if (0 != BMP_DEMO)
   DBG_STAT("Initialize_Bitmap_Demo() . . .");
   FWo=Initialize_Bitmap_Demo(FWo,next_bitmap_handle_available);
@@ -259,6 +281,7 @@ void loop()
   DBG_STAT("  done.\n");
   DBG_GEEK("RAM_G after marble: 0x%08lX = %lu\n",RAM_G_Unused_Start,RAM_G_Unused_Start);
 #endif //MARBLE_DEMO
+*/
 
 #if (0 != TOUCH_DEMO)
   //Bitmask of valid points in the array
@@ -461,6 +484,8 @@ void loop()
   FWo = Add_Dash_To_Display_List(FWo);
 #endif //DASH_DEMO
 
+
+/*
 #if (0 != VIDEO_DEMO)
 #if (0 != TOUCH_DEMO)
     FWo=Add_Video_To_Display_List(FWo,points_touched_mask,x_points,y_points);
@@ -473,6 +498,8 @@ void loop()
 #if (0 != LOGO_DEMO)
     FWo=Add_Logo_To_Display_List(FWo);
 #endif // (0 != LOGO_DEMO)
+*/
+
 
 #if (0 != REMOTE_BACKLIGHT_DEBUG)
     int
@@ -506,6 +533,7 @@ void loop()
   updateData();
 #endif //DASH_DEMO
 
+/*
 #if (0 != BOUNCE_DEMO)
     //========== MOVE THE BALL AND CYCLE COLOR AND TRANSPARENCY ==========
     Bounce_Ball();
@@ -515,6 +543,8 @@ void loop()
   //========== BOUNCE THE MARBLE AROUND ==========
   Move_Marble();
 #endif //(0 != MARBLE_DEMO)
+*/
+
     }  // while(1)
   } // loop()
 //===========================================================================
