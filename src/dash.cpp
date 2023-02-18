@@ -162,7 +162,6 @@ void updateData(void)
 
 uint16_t Add_Dash_To_Display_List(uint16_t FWol, bool dashMode)
 {
-    //FWol = 0;
     if(!dashMode){
         if (b3x2 > b2Bound)
         {
@@ -205,18 +204,24 @@ uint16_t Add_Dash_To_Display_List(uint16_t FWol, bool dashMode)
 uint16_t Add_Diag_To_Display_List(uint16_t FWol){
     
     FWol = EVE_Cmd_Dat_0(FWol, EVE_ENC_COLOR_RGB(greenR, greenG, greenB));
-
-    //FWol = EVE_Cmd_Dat_0(FWol, EVE_ENC_COLOR_RGB(255, 255, 255));
     
+    FWol = EVE_Filled_Rectangle(FWol, 50, 50, LCD_WIDTH - 60, LCD_HEIGHT - 60);
+
+    FWol = EVE_Cmd_Dat_0(FWol, EVE_ENC_COLOR_RGB(0, 0, 0));
+
+    FWol = EVE_Filled_Rectangle(FWol, 55, 55, LCD_WIDTH - 65, LCD_HEIGHT - 65);
+
+    FWol = EVE_Cmd_Dat_0(FWol, EVE_ENC_COLOR_RGB(greenR, greenG, greenB));
+
     FWol = EVE_PrintF(FWol, 250, 130, 25, EVE_OPT_CENTER, "RPM:  %3d", rpm_a);
 
     FWol = EVE_PrintF(FWol, 195, 205, 25, EVE_OPT_CENTER, "BATT VOLT:  %3d", bat);
 
     FWol = EVE_PrintF(FWol, 211, 280, 25, EVE_OPT_CENTER, "TGT AFR:  %3d", afrtgt);
 
-    FWol = EVE_PrintF(FWol, 182, 355, 25, EVE_OPT_CENTER, "COOL TEMP:  %3d", clt);
+    FWol = EVE_PrintF(FWol, 247, 355, 25, EVE_OPT_CENTER, "AFR:  %3d", afr);
 
-    FWol = EVE_PrintF(FWol, 570, 130, 25, EVE_OPT_CENTER, "AFR:  %3d", afr);
+    FWol = EVE_PrintF(FWol, 567, 130, 25, EVE_OPT_CENTER, "CLT:  %3d", clt);
 
     FWol = EVE_PrintF(FWol, 553, 205, 25, EVE_OPT_CENTER, "GEAR:  %3d", gear);
 

@@ -108,7 +108,7 @@
 #include "EVE_draw.h"
 
 // Our demonstrations of various EVE functions
-#include "demos.h"
+//#include "demos.h"
 #include "dash.h"
 
 
@@ -216,7 +216,7 @@ void loop()
 
 #if (0 != FSAE_DASH)
   bool dashMode = true;
-  bool flipped = false;
+  int flip = 0;
   DBG_STAT("Initialize_Dash() . . .");
   Initialize_Dash();
   DBG_STAT(" done.\n");
@@ -240,28 +240,7 @@ void loop()
     y_points[5];
 #endif // (EVE_TOUCH_TYPE == EVE_TOUCH_CAPACITIVE)
 
-#endif
-
-#if (0 != TOUCH_DEMO)
-  //Bitmask of valid points in the array
-  uint8_t
-    points_touched_mask;
-#if (EVE_TOUCH_TYPE == EVE_TOUCH_RESISTIVE)
-  DBG_GEEK("Resistive touch, single point.\n");
-  int16_t
-    x_points[1];
-  int16_t
-    y_points[1];
-#endif // (EVE_TOUCH_TYPE == EVE_TOUCH_RESISTIVE)
-
-#if (EVE_TOUCH_TYPE == EVE_TOUCH_CAPACITIVE)
-  DBG_GEEK("Capacitive touch, multiple points.\n");
-  int16_t
-    x_points[5];
-  int16_t
-    y_points[5];
-#endif // (EVE_TOUCH_TYPE == EVE_TOUCH_CAPACITIVE)
-#endif // (0 != TOUCH_DEMO)
+#endif // FSAE_DASH
 
   DBG_STAT("Initialization complete, entering main loop.\n");
 
@@ -280,10 +259,6 @@ void loop()
     // to all have ~60Hz frame rate.
     FWo=Wait_for_EVE_Execution_Complete(FWo);
 
-#if (0 != TOUCH_DEMO)
-    //Read the touch screen.
-    points_touched_mask=Read_Touch(x_points,y_points);
-#endif // TOUCH_DEMO
 
     //========== START THE DISPLAY LIST ==========
     // Start the display list
@@ -301,120 +276,6 @@ void loop()
     FWo = EVE_Cmd_Dat_0(FWo, EVE_ENC_COLOR_RGB(0,0,0));
     FWo=EVE_Filled_Rectangle(FWo,0,0,LCD_WIDTH-1,LCD_HEIGHT-1);
                             
-#if (0 != BMP_DEMO)
-    FWo=Add_Bitmap_To_Display_List(FWo);
-#endif // BMP_DEMO
-
-#if (0 != TOUCH_DEMO)
-    //See if we are touched at all.
-    if(0 != points_touched_mask)
-      {
-      //Loop through the possible touch points
-      uint8_t
-        mask;
-      mask=0x01;
-      for(uint8_t i=0;i<5;i++)
-        {
-        if(0 != (points_touched_mask&mask))
-          {
-          //This code loops through all the points touched
-          static uint32_t colors[5]=
-            {
-            EVE_ENC_COLOR_RGB(0x00,0x00,0xFF),
-            EVE_ENC_COLOR_RGB(0x00,0xFF,0x00),
-            EVE_ENC_COLOR_RGB(0xFF,0x00,0x00),
-            EVE_ENC_COLOR_RGB(0xFF,0x00,0xFF),
-            EVE_ENC_COLOR_RGB(0xFF,0xFF,0x00)
-            };
-#if (0!=DEBUG_COPROCESSOR_RESET)
-          //Test code to crash coprocessor ever other time it is called --
-          //for testing Reset_EVE_Coprocessor()
-          DBG_STAT("Initialize_Logo_Demo() . . .");
-          FWo=Initialize_Logo_Demo(FWo,&RAM_G_Unused_Start);
-          DBG_STAT("  done.\n");
-#endif // (0!=DEBUG_COPROCESSOR_RESET)
-          FWo=EVE_Cmd_Dat_0(FWo,
-                            colors[i]);
-          // Make it solid
-          FWo=EVE_Cmd_Dat_0(FWo,
-                            EVE_ENC_COLOR_A(0xFF));
-          // Draw the touch dot -- a 60px point (filled circle)
-          FWo=EVE_Point(FWo,
-                        x_points[i]*16,
-                        y_points[i]*16,
-                        60*16);
-          //Tag the touch point with magenta text to show off EVE_PrintF.
-          FWo=EVE_Cmd_Dat_0(FWo,
-                            EVE_ENC_COLOR_RGB(0xFF,0x00,0xFF));
-          //Move the the text out from under the user's finger
-          int16_t
-            xoffset;
-          int16_t
-            yoffset;
-          if(x_points[i] < (LCD_WIDTH/2))
-             {
-             xoffset=160; 
-             }
-          else
-             {
-             xoffset=-160;
-             }
-          if(y_points[i] < (LCD_HEIGHT/2))
-             {
-             yoffset=80; 
-             }
-          else
-             {
-             yoffset=-80;
-             }
-          //Put the text into the display list
-          FWo=EVE_PrintF(FWo,
-                         x_points[i]+xoffset,
-                         y_points[i]+yoffset,
-                         25,         //Font
-                         EVE_OPT_CENTER, //Options
-                         "T[%d]@(%d,%d)",
-                         i+1,
-                         x_points[i],
-                         y_points[i]);
-                      
-          }
-        mask<<=1;
-#if (0 != MANUAL_BACKLIGHT_DEBUG)
-
-        //Set the backlight brightness based on the first touch point.
-        if(0 != (0x01 & points_touched_mask))
-          {
-          FWo=Set_Backlight_From_Touch(FWo,x_points[0], LCD_WIDTH);
-
-//      DBG_GEEK("Reset after touch.\n");
-//
-//  //Point the video decoder to the video which is stored in flash
-//  FWo=EVE_Cmd_Dat_1(FWo,
-//                     EVE_ENC_CMD_FLASHSOURCE,
-//                     FLASH_SECTOR_ICE_FPV_512x300<<12);
-//  //Initialize the video decoder based on the flash address that
-//  //we just wrote.
-//  FWo=EVE_Cmd_Dat_0(FWo,
-//                     EVE_ENC_CMD_VIDEOSTARTF);                     
-        
-          }
-#endif // (0 != MANUAL_BACKLIGHT_DEBUG)
-        }
-      }
-#endif // (0 != TOUCH_DEMO)
-
-#if (0 != MARBLE_DEMO)
-#if (0 != TOUCH_DEMO)
-    //Only show the bouncing marble if no there is no touch
-    if(0 == points_touched_mask)
-      {
-#endif //(0 != TOUCH_DEMO)
-      FWo=Add_Marble_To_Display_List(FWo);
-#if (0 != TOUCH_DEMO)
-      }
-#endif //(0 != TOUCH_DEMO)
-#endif //(0 != MARBLE_DEMO)
 
 #if (0 != FSAE_DASH)
   FWo = Add_Dash_To_Display_List(FWo, dashMode);
@@ -422,28 +283,22 @@ void loop()
   points_touched_mask = Read_Touch(x_points,y_points);
 
   if(0 != points_touched_mask){
-      dashMode = !dashMode;
-      delay(100);
+      flip += 1;
+  }
+  else{
+    flip = 0;
+  }
+
+  if(flip >= 100){
+    flip = 0;
+    dashMode = !dashMode;
+    delay(100);
   }
   
+  DBG_GEEK("%d", flip);
+  DBG_GEEK("\n");
+
 #endif //DASH_DEMO
-
-
-/*
-#if (0 != VIDEO_DEMO)
-#if (0 != TOUCH_DEMO)
-    FWo=Add_Video_To_Display_List(FWo,points_touched_mask,x_points,y_points);
-#else // (0 != TOUCH_DEMO)
-    FWo=Add_Video_To_Display_List(FWo);
-#endif // (0 != TOUCH_DEMO)
-#endif // (0 != VIDEO_DEMO)
-
-
-#if (0 != LOGO_DEMO)
-    FWo=Add_Logo_To_Display_List(FWo);
-#endif // (0 != LOGO_DEMO)
-*/
-
 
 #if (0 != REMOTE_BACKLIGHT_DEBUG)
     int
@@ -460,11 +315,6 @@ void loop()
       }
 #endif // (0 != REMOTE_BACKLIGHT_DEBUG)
 
-#if (0 != VIDEO_DEMO)
-    //Move the video to the next 30Hz frame 
-    FWo=Update_Video_Frame(FWo);
-#endif // (0 != VIDEO_DEMO)
-
     //========== FINSH AND SHOW THE DISPLAY LIST ==========
     // Instruct the graphics processor to show the list
     FWo=EVE_Cmd_Dat_0(FWo, EVE_ENC_DISPLAY());
@@ -475,11 +325,8 @@ void loop()
 
 #if (0 != FSAE_DASH)
   updateData();
-  //points_touched_mask = 0;
   
 #endif //DASH_DEMO
-
-
 
     }  // while(1)
   } // loop()
