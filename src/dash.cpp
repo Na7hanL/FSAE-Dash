@@ -19,7 +19,7 @@ uint16_t b3x2;
 uint16_t b3Bound;
 uint16_t dashY1;
 uint16_t dashY2;
-uint16_t rpm;
+uint16_t barRpm;
 
 uint16_t greenR;
 uint16_t greenG;
@@ -31,7 +31,7 @@ uint16_t yellowR;
 uint16_t yellowG;
 uint16_t yellowB;
 
-uint16_t rpm_a;
+uint16_t rpm;
 uint16_t bat;
 uint16_t afrtgt;
 uint16_t clt;
@@ -43,6 +43,7 @@ uint16_t sync;
 bool back = false;
 bool testing = true;
 int printRPM;
+int gear_test_num = 0;
 // screen is 800px wide; 1rpm = 800/10500 px
 // convert then use;
 
@@ -53,7 +54,7 @@ void Initialize_Dash(void)
 
     dashY1 = 0;
     dashY2 = 150;
-    rpm = 0;
+    barRpm = 0;
     b1x1 = 0;
     b1x2 = 0;
     b1Bound = round(LCD_WIDTH * 0.61);
@@ -73,7 +74,7 @@ void Initialize_Dash(void)
     yellowG = 252;
     yellowB = 13;
 
-    rpm_a = 0;
+    rpm = 0;
     bat = 0;
     afrtgt = 0;
     clt = 0;
@@ -105,19 +106,19 @@ void updateData(void)
     */
 
     // updates bars in first rpm range
-    if (rpm <= b1Bound)
+    if (barRpm <= b1Bound)
     {
-        b1x2 = rpm;
+        b1x2 = barRpm;
         b2x2 = b1Bound;
     }
 
     // updates bars in second rpm range
-    if (rpm <= b2Bound)
+    if (barRpm <= b2Bound)
     {
-        b2x2 = rpm;
+        b2x2 = barRpm;
         b3x2 = b2Bound;
     }
-    else if (rpm > b2Bound)
+    else if (barRpm > b2Bound)
     {
         b2x2 = b2Bound;
     }
@@ -127,42 +128,52 @@ void updateData(void)
     }
 
     // updates bars in third rpm range
-    if (rpm > b2Bound)
+    if (barRpm > b2Bound)
     {
-        b3x2 = rpm;
+        b3x2 = barRpm;
     }
     else
     {
         b3x2 = b2Bound;
     }
 
-    printRPM = rpm * 10500 / 800;
+    rpm = barRpm * 10500 / 800;
 
     if (testing)
     {
-        if (rpm > LCD_WIDTH)
+        if (barRpm > LCD_WIDTH)
         {
             back = true;
+            if(gear_test_num < 5)
+            {
+                gear_test_num += 1;
+            }
+            else
+            {
+                gear_test_num = 0;
+            }
         }
-        if (rpm <= 0)
+        if (barRpm <= 0)
         {
             back = false;
         }
         if (!back)
         {
-            rpm += 10;
+            barRpm += 10;
         }
         else
         {
-            rpm = 40;
+            barRpm = 40;
             back = false;
         }
+
+        
     }
 }
 
 uint16_t Add_Dash_To_Display_List(uint16_t FWol, bool dashMode)
 {
-    if(!dashMode){
+    if(dashMode){
         if (b3x2 > b2Bound)
         {
             FWol = EVE_Cmd_Dat_0(FWol, EVE_ENC_COLOR_RGB(redR, redG, redB));
@@ -180,15 +191,34 @@ uint16_t Add_Dash_To_Display_List(uint16_t FWol, bool dashMode)
 
         FWol = EVE_PrintF(FWol, 200, 200, 25, EVE_OPT_CENTER, "RPM: ");
 
-        FWol = EVE_PrintF(FWol, 300, 200, 25, EVE_OPT_CENTER, "%3d", printRPM);
+        FWol = EVE_PrintF(FWol, 300, 200, 25, EVE_OPT_CENTER, "%3d", rpm);
 
         // This is where the Gear functions get printed out *****************
-        //FWol = gearN(FWol);
-        //FWol = gear1(FWol);
+
+        if(gear_test_num == 0)
+        {
+            FWol = gearN(FWol);
+        }
+        else if(gear_test_num == 1)
+        {
+            FWol = gear1(FWol);
+        }
+        else if(gear_test_num == 2)
+        {
         FWol = gear2(FWol);
-        //FWol = gear3(FWol);
-        //FWol = gear4(FWol);
-        //FWol = gear5(FWol);
+        }
+        else if(gear_test_num == 3)
+        {
+            FWol = gear3(FWol);
+        }
+        else if(gear_test_num == 4)
+        {
+            FWol = gear4(FWol);
+        }
+        else
+        {
+            FWol = gear5(FWol);
+        }
 
     }
     else{
@@ -213,7 +243,8 @@ uint16_t Add_Diag_To_Display_List(uint16_t FWol){
 
     FWol = EVE_Cmd_Dat_0(FWol, EVE_ENC_COLOR_RGB(greenR, greenG, greenB));
 
-    FWol = EVE_PrintF(FWol, 250, 130, 25, EVE_OPT_CENTER, "RPM:  %3d", rpm_a);
+    // switched to bat temporarily
+    FWol = EVE_PrintF(FWol, 250, 130, 25, EVE_OPT_CENTER, "RPM:  %3d", bat);
 
     FWol = EVE_PrintF(FWol, 195, 205, 25, EVE_OPT_CENTER, "BATT VOLT:  %3d", bat);
 
@@ -236,22 +267,16 @@ uint16_t Add_Diag_To_Display_List(uint16_t FWol){
 
 uint16_t gearN(uint16_t FWolE)
 {
-
-    // segment 0
     FWolE = EVE_Cmd_Dat_0(FWolE, EVE_ENC_COLOR_RGB(255, 255, 255));
-    FWolE = EVE_Filled_Rectangle(FWolE, 600, 175, 625, 450);
 
-    // segment 1
-    //FWolE = EVE_Filled_Rectangle(FWolE, 600, 300, 625, 450);
+    // Left Line
+    FWolE = EVE_Filled_Rectangle(FWolE, 627.5, 245, 650.5, 410);
 
-    // segment 3
-    FWolE=EVE_Filled_Rectangle(FWolE, 775 ,175 , 800, 450);
+    // Right Line
+    FWolE=EVE_Filled_Rectangle(FWolE, 735, 245, 760, 410);
 
-    // segment 4
-   // FWolE=EVE_Filled_Rectangle(FWolE, 775 ,300 , 800, 450);
-
-    // segment 7
-    FWolE=EVE_Line(FWolE, 617.5 ,192.5 , 782.5, 432.5, 17.5);
+    // Middle Line
+    FWolE=EVE_Line(FWolE, 645, 257.5, 741.5, 397.5, 12.5);
 
     return FWolE;
 }
@@ -261,76 +286,54 @@ uint16_t gear1(uint16_t FWolE)
 
     // the middle line
     FWolE = EVE_Cmd_Dat_0(FWolE, EVE_ENC_COLOR_RGB(255, 255, 255));
-    FWolE = EVE_Filled_Rectangle(FWolE, 685, 175, 710, 450);
+    FWolE = EVE_Filled_Rectangle(FWolE, 695, 205, 720, 450);
 
     // the Base line
-    FWolE = EVE_Filled_Rectangle(FWolE, 635, 425, 760, 450);
+    FWolE = EVE_Filled_Rectangle(FWolE, 640, 425, 775, 450);
 
     // the flag
-    // FWolE=EVE_Line(FWolE, 692.5, 192.5, 625, 285, 17.5);
-    FWolE=EVE_Line(FWolE, 692.5, 192.5, 650, 270, 17.5);
+    FWolE = EVE_Line(FWolE, 694, 217.5, 650, 270, 12.5);
 
     return FWolE;
 }
 
 uint16_t gear2(uint16_t FWolE)
 {
-
     FWolE = EVE_Cmd_Dat_0(FWolE, EVE_ENC_COLOR_RGB(255, 255, 255));
     
     // the Base line
-    FWolE = EVE_Filled_Rectangle(FWolE, 635, 425, 760, 450);
+    FWolE = EVE_Filled_Rectangle(FWolE, 640, 425, 775, 450);
 
-    // The connecter
-    //FWolE = EVE_Filled_Rectangle(FWolE, 645, 400, 675, 425);
-    
-    // blah blah git test
+    // Upper Loop
+    FWolE = EVE_Line(FWolE, 697.5, 275, 697.5, 275, 70);
+    FWolE = EVE_Cmd_Dat_0(FWolE, EVE_ENC_COLOR_RGB(0, 0, 0));
+    FWolE = EVE_Line(FWolE, 697.5, 275, 697.5, 275, 45);
+    FWolE = EVE_Filled_Rectangle(FWolE, 625, 275, 725, 345);
 
-    // Circle Stuff
-    //FWolE=EVE_Line(FWolE, 782.5, 432.5, 617.5 ,192.5, 17.5);
-    FWolE=EVE_Line(FWolE, 687.5, 325, 687.5, 325, 60);
+    // Middle line 
+    FWolE = EVE_Cmd_Dat_0(FWolE, EVE_ENC_COLOR_RGB(255, 255, 255));
+    FWolE = EVE_Line(FWolE, 630, 441, 730, 322.5, 12.5);
 
     FWolE = EVE_Cmd_Dat_0(FWolE, EVE_ENC_COLOR_RGB(0, 0, 0));
-    FWolE=EVE_Line(FWolE, 657.5, 345, 657.5, 345, 60);
-
-    FWolE = EVE_Cmd_Dat_0(FWolE, EVE_ENC_COLOR_RGB(255, 255, 255));
-    FWolE=EVE_Line(FWolE, 655, 440, 730, 347, 11);
-
-    FWolE=EVE_Filled_Rectangle(FWolE, 627.5, 265, 687.5, 285);
-
-
-    
-
-
-    
-
-    /*
-    // the Circle
-     FWolE = EVE_Cmd_Dat_0(FWolE, EVE_ENC_COLOR_RGB(255, 255, 255));
-    FWolE = EVE_Line(FWolE, 635, 425, 760, 450, 100);
-    */
-
-    //FWolE = EVE_Point(FWolE, 645, 400, 50);
-
+    FWolE = EVE_Filled_Rectangle(FWolE, 600, 400, 640, 460);
     return FWolE;
 }
 
 uint16_t gear3(uint16_t FWolE)
 
 {
+   // Upper Loop
     FWolE = EVE_Cmd_Dat_0(FWolE, EVE_ENC_COLOR_RGB(255, 255, 255));
+    FWolE = EVE_Line(FWolE, 697.5, 275, 697.5, 275, 70);
+    FWolE = EVE_Cmd_Dat_0(FWolE, EVE_ENC_COLOR_RGB(0, 0, 0));
+    FWolE = EVE_Line(FWolE, 697.5, 275, 697.5, 275, 45);
 
-    // the Base line
-    FWolE = EVE_Filled_Rectangle(FWolE, 635, 425, 760, 450);
-
-    // Right line
-    FWolE=EVE_Filled_Rectangle(FWolE, 735 ,175 , 760, 450);
-
-    // the Top line
-    FWolE = EVE_Filled_Rectangle(FWolE, 635, 175, 760, 200);
-
-    // the Middle line
-    FWolE = EVE_Filled_Rectangle(FWolE, 660, 300, 760, 325);
+    // bottom Loop
+    FWolE = EVE_Cmd_Dat_0(FWolE, EVE_ENC_COLOR_RGB(255, 255, 255));
+    FWolE = EVE_Line(FWolE, 697.5, 395, 697.5, 395, 70);
+    FWolE = EVE_Cmd_Dat_0(FWolE, EVE_ENC_COLOR_RGB(0, 0, 0));
+    FWolE = EVE_Line(FWolE, 697.5, 395, 697.5, 395, 45);
+    FWolE = EVE_Filled_Rectangle(FWolE, 625, 275, 697.5, 380);
 
     return FWolE;
 }
@@ -340,23 +343,44 @@ uint16_t gear4(uint16_t FWolE)
     FWolE = EVE_Cmd_Dat_0(FWolE, EVE_ENC_COLOR_RGB(255, 255, 255));
 
     // Right line
-    FWolE=EVE_Filled_Rectangle(FWolE, 735 ,175 , 760, 450);
+    FWolE=EVE_Filled_Rectangle(FWolE, 735, 205, 760, 450);
 
     // the Middle line
-    FWolE = EVE_Filled_Rectangle(FWolE, 635, 300, 760, 325);
+    FWolE = EVE_Filled_Rectangle(FWolE, 627.5, 326, 775, 350);
 
-    // left line
-    FWolE=EVE_Filled_Rectangle(FWolE, 635, 300, 660, 175);
+    // Left line
+    FWolE = EVE_Filled_Rectangle(FWolE, 627.5, 326, 650.5, 205);
+
+    return FWolE;
+}
+
+uint16_t gear5(uint16_t FWolE)
+{
+    
+    //Bottom loop
+    FWolE = EVE_Cmd_Dat_0(FWolE, EVE_ENC_COLOR_RGB(255, 255, 255));
+    FWolE = EVE_Line(FWolE, 697.5, 395, 697.5, 395, 70);
+    FWolE = EVE_Cmd_Dat_0(FWolE, EVE_ENC_COLOR_RGB(0, 0, 0));
+    FWolE = EVE_Line(FWolE, 697.5, 395, 697.5, 395, 45);
+
+    FWolE = EVE_Filled_Rectangle(FWolE, 625, 275, 697.5, 395);
+
+    // the Middle line
+    FWolE = EVE_Cmd_Dat_0(FWolE, EVE_ENC_COLOR_RGB(255, 255, 255));
+    FWolE = EVE_Filled_Rectangle(FWolE, 627.5, 326, 698, 349);
+
+    // Left line
+    FWolE = EVE_Filled_Rectangle(FWolE, 627.5, 326, 650.5, 225);
+
+    // Top Line
+    FWolE = EVE_Filled_Rectangle(FWolE, 627.5, 245, 750, 225); 
 
     return FWolE;
 }
 
 /*
 
-    1. touch screen
     2. Race screen needs batvolt, gear, shift light
     3. shift light start at 2000rpm
-    X 4. Use rectangles to make gear numbers
-    5. Diagnostic uses values from can v1.1 program in onedrive
 
 */
