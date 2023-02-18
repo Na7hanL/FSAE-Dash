@@ -124,6 +124,7 @@ void updateData(void)
 
     if (testing)
     {
+        
         if (rpm > LCD_WIDTH)
         {
             back = true;
@@ -145,13 +146,18 @@ void updateData(void)
         if(gear_test_num < 5)
         {
             gear_test_num += 1;
-            delay(200);
+            delay(1000);
         }
         else
         {
             gear_test_num = 0;
-            delay(200);
+            delay(1000);
         }
+        
+
+        //gear_test_num = 0;
+        
+       
     }
 }
 
@@ -209,22 +215,16 @@ uint16_t Add_Dash_To_Display_List(uint16_t FWol)
 
 uint16_t gearN(uint16_t FWolE)
 {
-
-    // segment 0
     FWolE = EVE_Cmd_Dat_0(FWolE, EVE_ENC_COLOR_RGB(255, 255, 255));
-    FWolE = EVE_Filled_Rectangle(FWolE, 600, 175, 625, 450);
 
-    // segment 1
-    //FWolE = EVE_Filled_Rectangle(FWolE, 600, 300, 625, 450);
+    // Left Line
+    FWolE = EVE_Filled_Rectangle(FWolE, 627.5, 245, 650.5, 410);
 
-    // segment 3
-    FWolE=EVE_Filled_Rectangle(FWolE, 775 ,175 , 800, 450);
+    // Right Line
+    FWolE=EVE_Filled_Rectangle(FWolE, 735, 245, 760, 410);
 
-    // segment 4
-   // FWolE=EVE_Filled_Rectangle(FWolE, 775 ,300 , 800, 450);
-
-    // segment 7
-    FWolE=EVE_Line(FWolE, 617.5 ,192.5 , 782.5, 432.5, 17.5);
+    // Middle Line
+    FWolE=EVE_Line(FWolE, 645, 257.5, 741.5, 397.5, 12.5);
 
     return FWolE;
 }
@@ -234,14 +234,13 @@ uint16_t gear1(uint16_t FWolE)
 
     // the middle line
     FWolE = EVE_Cmd_Dat_0(FWolE, EVE_ENC_COLOR_RGB(255, 255, 255));
-    FWolE = EVE_Filled_Rectangle(FWolE, 685, 175, 710, 450);
+    FWolE = EVE_Filled_Rectangle(FWolE, 695, 205, 720, 450);
 
     // the Base line
-    FWolE = EVE_Filled_Rectangle(FWolE, 635, 425, 760, 450);
+    FWolE = EVE_Filled_Rectangle(FWolE, 640, 425, 775, 450);
 
     // the flag
-    // FWolE=EVE_Line(FWolE, 692.5, 192.5, 625, 285, 17.5);
-    FWolE=EVE_Line(FWolE, 692.5, 192.5, 650, 270, 17.5);
+    FWolE = EVE_Line(FWolE, 694, 217.5, 650, 270, 12.5);
 
     return FWolE;
 }
@@ -251,37 +250,38 @@ uint16_t gear2(uint16_t FWolE)
     FWolE = EVE_Cmd_Dat_0(FWolE, EVE_ENC_COLOR_RGB(255, 255, 255));
     
     // the Base line
-    FWolE = EVE_Filled_Rectangle(FWolE, 657, 395, 760, 420);
+    FWolE = EVE_Filled_Rectangle(FWolE, 640, 425, 775, 450);
 
     // Upper Loop
-    FWolE = EVE_Line(FWolE, 697.5, 295, 697.5, 295, 60);
+    FWolE = EVE_Line(FWolE, 697.5, 275, 697.5, 275, 70);
     FWolE = EVE_Cmd_Dat_0(FWolE, EVE_ENC_COLOR_RGB(0, 0, 0));
-    FWolE = EVE_Line(FWolE, 697.5, 295, 697.5, 295, 40);
-    FWolE = EVE_Filled_Rectangle(FWolE, 637.5, 295, 720, 355);
+    FWolE = EVE_Line(FWolE, 697.5, 275, 697.5, 275, 45);
+    FWolE = EVE_Filled_Rectangle(FWolE, 625, 275, 725, 345);
 
-    // Middle line
+    // Middle line 
     FWolE = EVE_Cmd_Dat_0(FWolE, EVE_ENC_COLOR_RGB(255, 255, 255));
-    FWolE=EVE_Line(FWolE, 655, 410, 730, 333, 10);
+    FWolE = EVE_Line(FWolE, 630, 441, 730, 322.5, 12.5);
 
+    FWolE = EVE_Cmd_Dat_0(FWolE, EVE_ENC_COLOR_RGB(0, 0, 0));
+    FWolE = EVE_Filled_Rectangle(FWolE, 600, 400, 640, 460);
     return FWolE;
 }
 
 uint16_t gear3(uint16_t FWolE)
 
 {
+   // Upper Loop
     FWolE = EVE_Cmd_Dat_0(FWolE, EVE_ENC_COLOR_RGB(255, 255, 255));
+    FWolE = EVE_Line(FWolE, 697.5, 275, 697.5, 275, 70);
+    FWolE = EVE_Cmd_Dat_0(FWolE, EVE_ENC_COLOR_RGB(0, 0, 0));
+    FWolE = EVE_Line(FWolE, 697.5, 275, 697.5, 275, 45);
 
-    // the Base line
-    FWolE = EVE_Filled_Rectangle(FWolE, 635, 425, 760, 450);
-
-    // Right line
-    FWolE=EVE_Filled_Rectangle(FWolE, 735 ,175 , 760, 450);
-
-    // the Top line
-    FWolE = EVE_Filled_Rectangle(FWolE, 635, 175, 760, 200);
-
-    // the Middle line
-    FWolE = EVE_Filled_Rectangle(FWolE, 660, 300, 760, 325);
+    // bottom Loop
+    FWolE = EVE_Cmd_Dat_0(FWolE, EVE_ENC_COLOR_RGB(255, 255, 255));
+    FWolE = EVE_Line(FWolE, 697.5, 395, 697.5, 395, 70);
+    FWolE = EVE_Cmd_Dat_0(FWolE, EVE_ENC_COLOR_RGB(0, 0, 0));
+    FWolE = EVE_Line(FWolE, 697.5, 395, 697.5, 395, 45);
+    FWolE = EVE_Filled_Rectangle(FWolE, 625, 275, 697.5, 380);
 
     return FWolE;
 }
@@ -291,35 +291,37 @@ uint16_t gear4(uint16_t FWolE)
     FWolE = EVE_Cmd_Dat_0(FWolE, EVE_ENC_COLOR_RGB(255, 255, 255));
 
     // Right line
-    FWolE=EVE_Filled_Rectangle(FWolE, 735 ,175 , 760, 450);
+    FWolE=EVE_Filled_Rectangle(FWolE, 735, 205, 760, 450);
 
     // the Middle line
-    FWolE = EVE_Filled_Rectangle(FWolE, 635, 300, 760, 325);
+    FWolE = EVE_Filled_Rectangle(FWolE, 627.5, 326, 775, 350);
 
-    // left line
-    FWolE=EVE_Filled_Rectangle(FWolE, 635, 300, 660, 175);
+    // Left line
+    FWolE = EVE_Filled_Rectangle(FWolE, 627.5, 326, 650.5, 205);
 
     return FWolE;
 }
 
 uint16_t gear5(uint16_t FWolE)
 {
-    // Bottom Loop
+    
+    //Bottom loop
     FWolE = EVE_Cmd_Dat_0(FWolE, EVE_ENC_COLOR_RGB(255, 255, 255));
-    FWolE = EVE_Line(FWolE, 697.5, 375, 697.5, 375, 60);
+    FWolE = EVE_Line(FWolE, 697.5, 395, 697.5, 395, 70);
     FWolE = EVE_Cmd_Dat_0(FWolE, EVE_ENC_COLOR_RGB(0, 0, 0));
-    FWolE = EVE_Line(FWolE, 697.5, 375, 697.5, 375, 40);
-    FWolE = EVE_Filled_Rectangle(FWolE, 637.5, 265, 697.5, 380);
+    FWolE = EVE_Line(FWolE, 697.5, 395, 697.5, 395, 45);
+
+    FWolE = EVE_Filled_Rectangle(FWolE, 625, 275, 697.5, 395);
 
     // the Middle line
     FWolE = EVE_Cmd_Dat_0(FWolE, EVE_ENC_COLOR_RGB(255, 255, 255));
-    FWolE = EVE_Filled_Rectangle(FWolE, 640, 316, 698, 334);
+    FWolE = EVE_Filled_Rectangle(FWolE, 627.5, 326, 698, 349);
 
     // Left line
-    FWolE = EVE_Filled_Rectangle(FWolE, 640, 316, 660, 250);
+    FWolE = EVE_Filled_Rectangle(FWolE, 627.5, 326, 650.5, 225);
 
     // Top Line
-    FWolE = EVE_Filled_Rectangle(FWolE, 640, 250, 750, 230);
+    FWolE = EVE_Filled_Rectangle(FWolE, 627.5, 245, 750, 225); 
 
     return FWolE;
 }
