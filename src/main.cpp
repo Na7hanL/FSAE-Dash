@@ -216,6 +216,7 @@ void loop()
 
 #if (0 != FSAE_DASH)
   bool dashMode = true;
+  bool flipped = false;
   DBG_STAT("Initialize_Dash() . . .");
   Initialize_Dash();
   DBG_STAT(" done.\n");
@@ -279,7 +280,7 @@ void loop()
     // to all have ~60Hz frame rate.
     FWo=Wait_for_EVE_Execution_Complete(FWo);
 
-#if TOUCH_DEMO
+#if (0 != TOUCH_DEMO)
     //Read the touch screen.
     points_touched_mask=Read_Touch(x_points,y_points);
 #endif // TOUCH_DEMO
@@ -424,7 +425,6 @@ void loop()
       dashMode = !dashMode;
       delay(100);
   }
-
   
 #endif //DASH_DEMO
 
@@ -475,6 +475,8 @@ void loop()
 
 #if (0 != FSAE_DASH)
   updateData();
+  //points_touched_mask = 0;
+  
 #endif //DASH_DEMO
 
 
