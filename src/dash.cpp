@@ -242,8 +242,6 @@ void updateData(void)
         b3x2 = b2Bound;
     }
 
-    rpm_dash = barRpm * 10500 / 800;
-
     if (testing)
     {
         if (barRpm > LCD_WIDTH)
@@ -291,7 +289,7 @@ uint16_t Add_Diag_To_Display_List_dash(uint16_t FWol){
     // switched to bat temporarily
     FWol = EVE_PrintF(FWol, 250, 130, 25, EVE_OPT_CENTER, "RPM:  %3d", bat_dash);
 
-    FWol = EVE_PrintF(FWol, 195, 205, 25, EVE_OPT_CENTER, "BATT VOLT:  %3d", bat_dash);
+    FWol = EVE_PrintF(FWol, 195, 205, 25, EVE_OPT_CENTER, "BATT VOLT:  %3d", rpm_dash);
 
     FWol = EVE_PrintF(FWol, 211, 280, 25, EVE_OPT_CENTER, "TGT AFR:  %3d", afrtgt_dash);
 
@@ -485,9 +483,8 @@ uint16_t Add_Dash_To_Display_List(uint16_t FWol, bool dashMode)
         
 
     }
-
-    return (FWol);
     loop_dash();
+    return (FWol);
 }   
 
 
