@@ -151,9 +151,11 @@
 
 //Arduino style pin defines
 // Interrupt from EVE to Arduino - input, not used in this example.
-#define EVE_INT     (5) // nathan set 5
+//#define EVE_INT     (5) // nathan set 5
+#define EVE_INT     (7) // nathan set 5
 // PD_N from Arduino to EVE - effectively EVE reset
-#define EVE_PD_NOT  (6) // nathan set 6
+//#define EVE_PD_NOT  (6) // nathan set 6
+#define EVE_PD_NOT  (8) // nathan set 6
 // SPI chip select - defined separately since it's manipulated with GPIO calls
 #define EVE_CS_NOT  (10) //nathan set 10
 // Reserved for use with the SD card library
