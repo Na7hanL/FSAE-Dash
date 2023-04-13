@@ -8,7 +8,7 @@
 
 
 void Initialize_Dash(void);
-uint16_t Add_Dash_To_Display_List(uint16_t FWol);
+uint16_t Add_Dash_To_Display_List(uint16_t FWol, bool dashMode);
 void updateData(void);
 
 uint16_t gearN(uint16_t FWolE);

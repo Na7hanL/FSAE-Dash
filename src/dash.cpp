@@ -190,6 +190,7 @@ void Initialize_Dash(void)
 
 void updateData(void)
 {
+  barRpm = (rpm_dash - 2000)*(800/8000);
 
     /*
     if(rpm < b1Bound){
