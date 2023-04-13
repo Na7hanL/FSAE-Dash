@@ -44,8 +44,8 @@ int printRPM;
 void Initialize_Dash(void)
 {
 
-    dashY1 = 0;
-    dashY2 = 150;
+    dashY1 = 330;
+    dashY2 = 480;
     rpm = 0;
     b1x1 = 0;
     b1x2 = 0;
