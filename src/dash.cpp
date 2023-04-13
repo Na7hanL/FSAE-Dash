@@ -122,9 +122,10 @@ void canSniff(const CAN_message_t &msg) {
 void Initialize_Dash(void)
 {
 
-    dashY1 = 0;
-    dashY2 = 150;
-    barRpm = 0;
+
+    dashY1 = 330;
+    dashY2 = 480;
+    rpm = 0;
     b1x1 = 0;
     b1x2 = 0;
     b1Bound = round(LCD_WIDTH * 0.61);
